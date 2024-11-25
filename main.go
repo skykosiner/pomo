@@ -52,7 +52,7 @@ func main() {
 					visible := true
 					for range 10 {
 						if visible {
-							fmt.Printf("\r%s", "00:00")
+							fmt.Printf("\r%s", "🛑 00:00")
 						} else {
 							fmt.Print("\r      ")
 						}
