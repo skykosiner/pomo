@@ -49,7 +49,7 @@ func main() {
 				return
 			}
 
-			fmt.Println(t)
+			t.Print()
 		},
 	}
 
@@ -60,7 +60,7 @@ func main() {
 			Run: func(cmd *cobra.Command, args []string) {
 				t, err := loadTimer()
 				if err == nil && t.CurrentDuration > 0 {
-					fmt.Println(t)
+					t.current()
 					return
 				}
 
@@ -80,7 +80,7 @@ func main() {
 				}
 
 				t = NewTimer(length)
-				fmt.Println(t)
+				t.current()
 			},
 		},
 		{

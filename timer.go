@@ -61,7 +61,7 @@ func (t *timer) current() {
 	t.updateCache()
 }
 
-func (t timer) String() string {
+func (t timer) Print() {
 	t.current()
 
 	minutes := t.CurrentDuration / 60
@@ -70,10 +70,19 @@ func (t timer) String() string {
 	if t.CurrentDuration < 0 {
 		minutes = -minutes
 		seconds = -seconds
-		return fmt.Sprintf("🍅 -%02d:%02d", minutes, seconds)
+
+		logo := ""
+		if t.CurrentDuration%2 == 0 {
+			logo = ""
+		}
+
+		fmt.Printf("%s -%02d:%02d\n", logo, minutes, seconds)
+
+		time.Sleep(1 * time.Second)
+		return
 	}
 
-	return fmt.Sprintf("🍅 %02d:%02d", minutes, seconds)
+	fmt.Printf(" %02d:%02d", minutes, seconds)
 }
 
 func (t timer) delete() {
