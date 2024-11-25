@@ -45,27 +45,7 @@ func main() {
 		Short: "pomo - Terminal Pomodoro Tool",
 		Run: func(cmd *cobra.Command, args []string) {
 			t, err := loadTimer()
-			if err != nil || t.CurrentDuration == 0 {
-				overTime := int(time.Now().Unix() - t.EndTime)
-
-				if overTime <= 8 {
-					visible := true
-					for range 10 {
-						if visible {
-							fmt.Printf("\r%s", "🛑 00:00")
-						} else {
-							fmt.Print("\r      ")
-						}
-
-						visible = !visible
-						time.Sleep(1 * time.Second)
-
-						fmt.Print("\r")
-					}
-					return
-				}
-
-				fmt.Fprintln(os.Stderr, "There is currently no timer running. Use pomo new to create a new timer.")
+			if err != nil {
 				return
 			}
 
@@ -87,12 +67,16 @@ func main() {
 				// 25 minutes
 				length := 1500
 				if len(args) > 0 {
-					l, err := strconv.Atoi(args[0])
-					if err != nil {
-						return
-					}
+					if args[0] != "hour" {
+						l, err := strconv.Atoi(args[0])
+						if err != nil {
+							return
+						}
 
-					length = l
+						length = l
+					} else {
+						length = (60 - time.Now().Minute()) * 60
+					}
 				}
 
 				t = NewTimer(length)

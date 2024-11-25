@@ -57,10 +57,6 @@ func (t *timer) current() {
 	elapsed := now - t.LastUpdated
 	t.CurrentDuration -= int(elapsed)
 
-	if t.CurrentDuration < 0 {
-		t.CurrentDuration = 0
-	}
-
 	t.LastUpdated = now
 	t.updateCache()
 }
@@ -71,10 +67,24 @@ func (t timer) String() string {
 	minutes := t.CurrentDuration / 60
 	seconds := t.CurrentDuration % 60
 
+	if t.CurrentDuration < 0 {
+		minutes = -minutes
+		seconds = -seconds
+		return fmt.Sprintf("🍅 -%02d:%02d", minutes, seconds)
+	}
+
 	return fmt.Sprintf("🍅 %02d:%02d", minutes, seconds)
 }
 
 func (t timer) delete() {
-	t.CurrentDuration = 0
-	t.current()
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		slog.Error("Error getting cache dir", "error", err)
+		return
+	}
+
+	pomoCache := filepath.Join(cacheDir, "pomo", "pomo.json")
+	if err := os.Remove(pomoCache); err != nil {
+		slog.Error("Cloudn't stop timer", "error", err)
+	}
 }
