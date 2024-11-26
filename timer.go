@@ -14,6 +14,8 @@ type timer struct {
 	EndTime         int64 `json:"EndTime"`
 	LastUpdated     int64 `json:"LastUpdated"`
 	CurrentDuration int   `json:"CurrentDuration"`
+	Length          int   `json:"length"`
+	Paused          bool  `json:"paused"`
 }
 
 func NewTimer(length int) timer {
@@ -23,6 +25,8 @@ func NewTimer(length int) timer {
 		EndTime:         unixTime + int64(length),
 		LastUpdated:     unixTime,
 		CurrentDuration: length,
+		Length:          length,
+		Paused:          false,
 	}
 }
 
@@ -53,15 +57,17 @@ func (t timer) updateCache() {
 }
 
 func (t *timer) current() {
-	now := time.Now().Unix()
-	elapsed := now - t.LastUpdated
-	t.CurrentDuration -= int(elapsed)
+	if !t.Paused {
+		now := time.Now().Unix()
+		elapsed := now - t.LastUpdated
+		t.CurrentDuration -= int(elapsed)
 
-	t.LastUpdated = now
-	t.updateCache()
+		t.LastUpdated = now
+		t.updateCache()
+	}
 }
 
-func (t timer) Print() {
+func (t timer) print() {
 	t.current()
 
 	minutes := t.CurrentDuration / 60
@@ -82,6 +88,11 @@ func (t timer) Print() {
 		return
 	}
 
+	if t.Paused {
+		fmt.Printf(" %02d:%02d", minutes, seconds)
+		return
+	}
+
 	fmt.Printf(" %02d:%02d", minutes, seconds)
 }
 
@@ -95,5 +106,22 @@ func (t timer) delete() {
 	pomoCache := filepath.Join(cacheDir, "pomo", "pomo.json")
 	if err := os.Remove(pomoCache); err != nil {
 		slog.Error("Cloudn't stop timer", "error", err)
+	}
+}
+
+func (t *timer) pause() {
+	t.Paused = true
+	t.updateCache()
+}
+
+func (t *timer) resume() {
+	if t.Paused {
+		now := time.Now().Unix()
+
+		t.Paused = false
+		t.EndTime = now + int64(t.CurrentDuration)
+		t.LastUpdated = now
+
+		t.updateCache()
 	}
 }

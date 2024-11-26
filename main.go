@@ -49,7 +49,7 @@ func main() {
 				return
 			}
 
-			t.Print()
+			t.print()
 		},
 	}
 
@@ -60,7 +60,6 @@ func main() {
 			Run: func(cmd *cobra.Command, args []string) {
 				t, err := loadTimer()
 				if err == nil && t.CurrentDuration > 0 {
-					t.current()
 					return
 				}
 
@@ -93,6 +92,30 @@ func main() {
 				}
 
 				t.delete()
+			},
+		},
+		{
+			Use:   "pause",
+			Short: "Pause the timer",
+			Run: func(cmd *cobra.Command, args []string) {
+				t, err := loadTimer()
+				if err != nil {
+					return
+				}
+
+				t.pause()
+			},
+		},
+		{
+			Use:   "resume",
+			Short: "Resume the timer",
+			Run: func(cmd *cobra.Command, args []string) {
+				t, err := loadTimer()
+				if err != nil {
+					return
+				}
+
+				t.resume()
 			},
 		},
 	}
