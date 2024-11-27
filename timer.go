@@ -10,10 +10,10 @@ import (
 )
 
 type timer struct {
-	StartTime       int64 `json:"StartTime"`
-	EndTime         int64 `json:"EndTime"`
-	LastUpdated     int64 `json:"LastUpdated"`
-	CurrentDuration int   `json:"CurrentDuration"`
+	StartTime       int64 `json:"start_time"`
+	EndTime         int64 `json:"end_time"`
+	LastUpdated     int64 `json:"last_updated"`
+	CurrentDuration int   `json:"current_duration"`
 	Length          int   `json:"length"`
 	Paused          bool  `json:"paused"`
 }
@@ -72,6 +72,10 @@ func (t timer) print() {
 
 	minutes := t.CurrentDuration / 60
 	seconds := t.CurrentDuration % 60
+
+	if t.CurrentDuration == 0 {
+		playSound()
+	}
 
 	if t.CurrentDuration < 0 {
 		minutes = -minutes

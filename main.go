@@ -66,15 +66,16 @@ func main() {
 				// 25 minutes
 				length := 1500
 				if len(args) > 0 {
-					if args[0] != "hour" {
+					switch args[0] {
+					case "hour":
+						length = (60 - time.Now().Minute()) * 60
+					default:
 						l, err := strconv.Atoi(args[0])
 						if err != nil {
 							return
 						}
 
 						length = l
-					} else {
-						length = (60 - time.Now().Minute()) * 60
 					}
 				}
 
